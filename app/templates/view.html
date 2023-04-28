@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualization</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/template.css') }}">
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/view.css') }}">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-logo">sdmay23-35</div>
+        <nav class="header-navbar">
+            <ul>
+                <li><a href="/">HOME</a></li>
+                <li><a href="/model">QUERY MODEL</a></li>
+                <li><a href="https://sdmay23-35.sd.ece.iastate.edu/#teammembers">ABOUT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main -->
+    <main>
+        <h1>Visualization</h1>
+        <h2>Expected Number of Citations</h2>
+        <img src="{{ url_for('static', filename='images/plot.png') }}">
+        <br><br>
+        <hr style="width:80%">
+        <h2>Locations From Selected Paper's Affiliations</h2>
+        <p>
+            <SELECT id="location_select" name="location">
+                <OPTION value=-1>--Select a location to view--</OPTION>
+                {% for i in locations %}
+                    <OPTION value={{loop.index - 1}}>{{i}}</OPTION>
+                {% endfor %}
+            </SELECT>
+            <button type="button" onclick="fitMapToMarkers()">Reset Map View</button>
+        </p>
+        <div class="map" id="map"></div>
+        <br><br>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+
+    <script>
+        mapboxgl.accessToken = 'MAPBOX_TOKEN'; 
+        var locations = {{ locations | tojson }};
+        var location_coords = [];
+
+        var boundingCoordinates = [];
+        console.log(locations);
+
+        async function fetchData(l) {
+            const response = await fetch("https://api.mapbox.com/geocoding/v5/mapbox.places/"+ encodeURIComponent(l) +".json?access_token="+ mapboxgl.accessToken );
+            const data = await response.json();
+            return data; 
+        }
+
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-93.64733, 42.026508],
+            zoom: 10
+        });
+
+        $(function () {
+            $("#location_select").on("change", function () {
+                var loactionIndex = document.querySelector("#location_select").value;
+                if(loactionIndex >= 0){
+                    map.flyTo({
+                        center: location_coords[loactionIndex],
+                        zoom: 10
+                    });
+                }
+                // lose focus
+                $(this).blur();
+            });
+        });
+
+        // adjust map bounds to include markers
+        function fitMapToMarkers(){
+            // add marker coords to list and reduce bounds if more than one marker
+            if(boundingCoordinates.length > 1){
+                var bounds = boundingCoordinates.reduce(function(bounds, coord) {
+                        return bounds.extend(coord);
+                    }, new mapboxgl.LngLatBounds(boundingCoordinates[0], boundingCoordinates[0])
+                );
+                map.fitBounds(bounds, {
+                    padding: 100
+                });
+            }else if (boundingCoordinates.length > 0){
+                // otherwise center over one marker
+                map.flyTo({
+                    center: boundingCoordinates[0]
+                });
+            }
+        }
+
+        for (let i = 0; i < locations.length; i++) {
+            fetchData(locations[i]).then((value) => {
+                var coords = value.features[0].center;
+                var place_name = value.features[0].place_name;
+
+                // if not an exact match then get matching text
+                if(value.features[0].matching_place_name){
+                    place_name = value.features[0].matching_place_name;
+                }
+                
+                console.log(coords);
+                
+                // create popup
+                var popup = new mapboxgl.Popup({
+                        offset: 25,
+                        closeButton: false
+                    })
+                    .setText(place_name);
+
+                // create marker
+                var marker = new mapboxgl.Marker()
+                    .setLngLat(coords)
+                    .setPopup(popup);
+                
+                // add html click listener to fly camera to marker
+                marker.getElement().addEventListener('click', function(){
+                    map.flyTo({
+                        center: marker.getLngLat(),
+                        zoom: 10
+                    });
+                });
+
+                // push marker to map
+                marker.addTo(map);
+
+                // save coords for later
+                location_coords[i] = coords;
+
+                // for every new marker, fit map to include marker
+                boundingCoordinates.push(coords);
+                fitMapToMarkers();
+            });
+        }
+
+        
+    </script>
+
+</body>
+
+</html>

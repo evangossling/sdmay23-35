@@ -1,0 +1,33 @@
+main{
+  text-align: center;
+}
+
+select{
+  font-family:verdana;
+}
+
+button{
+  color: white;
+}
+.mapboxgl-map {
+  width: 1000px; 
+  height: 600px; 
+  margin: 0 auto;
+}
+
+.mapboxgl-marker:hover {
+  cursor: pointer;
+}
+
+.mapboxgl-marker path {
+    fill: var(--color-primary);
+  }
+
+.mapboxgl-marker:hover path{
+  fill: var(--color-primary-shade-1);
+}
+
+#location_select {
+  background-color: white;
+  text-align: center;
+}

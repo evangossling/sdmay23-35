@@ -1,0 +1,15 @@
+.home p{
+    font-size: 14pt;
+    margin: 40px 100px 40px 100px;
+}
+
+.home img{
+    width: 25%; 
+    display: block; 
+    margin-left: auto; 
+    margin-right: auto;
+}
+
+.middle {
+    text-align: center;
+}

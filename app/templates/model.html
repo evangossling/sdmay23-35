@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>
+        Query Model
+    </title>
+    <!-- Style -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/template.css') }}">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/model.css') }}">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-logo">sdmay23-35</div>
+        <nav class="header-navbar">
+            <ul>
+                <li><a href="/">HOME</a></li>
+                <li><a class="active" href="/model">QUERY MODEL</a></li>
+                <li><a href="https://sdmay23-35.sd.ece.iastate.edu/#teammembers">ABOUT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main -->
+    <main>
+        <h1 style="text-align: center">Create a Query</h1>
+
+        <p>
+            <strong>Please fill out the parameters to launch a query.</strong> <br>
+            The "Research Paper Title" field will allow you to select a research paper from the APS dataset to predict its expected citations. <br>
+            The "# of Predictions" field will allow you to choose how many predictions of expected citation count you want. <br>
+            The "Interval of Predictions" field allows you to select the interval over which each prediction is estimated.
+        </p>
+
+        <hr style="width:30%">
+        <br>
+
+        <div class="query" id="input">
+            <h2>Generate expected number of citations</h2>
+            <form>
+                <label for="paper_title">Research Paper Title: </label>
+                <input type="text" name="paper_title" id="paper_title" placeholder="Paper Title">
+                <br><br>
+                <label for="num_predictions"># of Predictions: </label>
+                <select name="num_predictions" id="num_predictions">
+                    <option value="0"></option>
+                    <option value=5>5</option>
+                    <option value=10>10</option>
+                    <option value=25>25</option>
+                </select>
+                <br><br>
+                <label for="prediction_time_frame">Interval of Predictions: </label>
+                <select name="prediction_time" id="prediction_time_frame">
+                    <option value="0"></option>
+                    <option value=0.25>3 months</option>
+                    <option value=0.5>6 months</option>
+                    <option value=1>1 year</option>
+                    <option value=2>2 years</option>
+                    <option value=5>5 years</option>
+                </select>
+                <br><br>
+                <button id="submit-button" type="button" onclick="launchQuery()">Launch Query</button>
+            </form>
+        </div>
+        <div id="loader-background" class="loader-background" hidden="hidden"></div>
+         <div id="spinning-loader" class="loader" hidden="hidden"></div>
+
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        // autocomplete paper_title input
+        $(function(){
+            $("#paper_title").autocomplete({
+                // source of suggestion list
+                source: "paperNameAutocomplete",
+                minLength: 1,
+                change: function (event, ui) {
+                if(!ui.item){
+                    //http://api.jqueryui.com/autocomplete/#event-change -
+                    // The item selected from the menu, if any. Otherwise the property is null
+                    //so clear the item for force selection
+                    $("#paper_title").val("");
+                }
+
+            }
+            });
+        });
+
+        function launchQuery() {
+            // disable the button and show the loader
+            $("#submit-button").attr("disabled", true)
+            $("#input").addClass("disabled")
+            $("#spinning-loader").removeAttr("hidden")
+            $("#loader-background").removeAttr("hidden")
+
+            paper_title = document.querySelector("#paper_title").value
+            num_predictions = document.querySelector("#num_predictions").value
+            prediction_time_frame = document.querySelector("#prediction_time_frame").value
+
+            if(paper_title == "" | num_predictions == 0 | prediction_time_frame == 0) {
+                alert("Please fill out all fields.")
+                return
+            }
+
+            console.log("paper_title: " + paper_title + "\nnum_predictions: " + num_predictions + "\nprediction_time_frame: " + prediction_time_frame)
+
+           $.ajax({
+                type: 'POST',
+                contentType: 'application/json',
+                dataType: 'text',
+                url: '/query',
+                data: JSON.stringify({"title":paper_title, "predictions":num_predictions, "time":prediction_time_frame}),
+                success: function (response) {
+                   console.log(response);
+                   document.write(response);
+                },
+                error: function(error) {
+                    console.log("ERROR\n");
+                    console.log(error);
+                    alert("An error occurred. Please try again later")
+                }
+            });
+            
+        }
+    </script>
+
+</body>
+
+</html>

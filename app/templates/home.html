@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>
+		Home
+	</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/template.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}">
+
+</head>
+
+<body>
+	<header>
+		<div class="header-logo">sdmay23-35</div>
+        <nav class="header-navbar">
+			<ul>
+				<li><a class="active" href="/">HOME</a></li>
+				<li><a href="/model">QUERY MODEL</a></li>
+				<li><a href="https://sdmay23-35.sd.ece.iastate.edu/#teammembers">ABOUT</a></li>
+			</ul>
+		</nav>
+	</header>
+	<main>
+		<br>
+		<div class="home">
+			<p>
+				The objective of our web application is to provide an end-to-end system that will provide such functionalities for the users interested in visualizing locations related to popularity cascades in the context of scientific paper citations. We use the machine learning model: HINTS Citation Time Series Prediction. HINTS uses their machine learning model to obtain three values: η, μ, σ.
+			</p>
+			<img src="{{ url_for('static', filename='images/equation.png') }}">
+			<p class="middle">
+				Using these obtained values in the above equation, we are able to predict the expected number of citations of x years, as shown in the graph below.
+			</p>
+			<img src="{{ url_for('static', filename='images/graph.png') }}">
+			<p>Part of our purpose, is to integrate this machine learning model into it. We combine this with the APS dataset, of which the model is trained on, to map the locations associated with the paper and the locations of papers that cited the original paper into our Mapbox map. </p>
+		</div>
+	</main>
+
+</body>
+
+</html>

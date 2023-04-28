@@ -1,0 +1,82 @@
+.query {
+    margin: 10px;
+    padding: 10px;
+    display: block;
+    background-color: var(--color-light-tint-2);
+    color: var(--color-dark);
+    border-radius: 10px;
+    width: fit-content;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    /* centers the div */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.query h2 {
+    margin: 5px 0px;
+}
+
+.ui-widget.ui-widget-content {
+    /* restrict the width of the "dropdown" elements */ 
+    width: 700px;
+    border: 1px solid var(--color-light-shade-2);
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+} 
+
+/* the "dropdown" portion now alternates colors */
+.ui-widget-content li:nth-child(even) {
+    background-color: var(--color-light-tint-1);
+}
+
+button {
+    background-color: var(--color-info);
+    color: white;
+}
+
+button:hover {
+    background-color: var(--color-info-shade-1);
+}
+
+select {
+    background-color: white;
+}
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid var(--color-primary);
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -60px;
+    margin-left: -60px;
+}
+
+.loader-background {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.65);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+div.disabled {
+    pointer-events: none;
+    user-select: none;
+}
+
+p {
+    font-size: larger;
+    margin-left: 500px;
+    margin-bottom: 30px;
+}

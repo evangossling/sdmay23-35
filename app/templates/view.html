@@ -51,7 +51,11 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
 
     <script>
+        // TODO
+        // IMPORTANT
+        // INSERT MAPBOX TOKEN FOR MAP TO WORK
         mapboxgl.accessToken = 'MAPBOX_TOKEN'; 
+        
         var locations = {{ locations | tojson }};
         var location_coords = [];
 
